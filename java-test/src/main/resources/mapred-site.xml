@@ -29,4 +29,9 @@
         <name>mapreduce.jobhistory.address</name>
         <value>10.19.31.139:10020</value>
      </property>
+    <!--日志文件位置-->
+    <property>
+        <name>mapreduce.cluster.local.dir</name>
+        <value>/usr/local/hadoop/temLog</value>
+    </property>
 </configuration>

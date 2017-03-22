@@ -7,7 +7,6 @@ package com.believe.sun;
  */
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
@@ -20,9 +19,11 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
+import static com.believe.sun.util.HDFSFileUtil.deleteDir;
+
 public class WordCount {
-    public static final String INPUT = "hdfs://10.19.31.139:9000/user/hadoop/input/wordcount";
-    public static final String OUT_PUT = "hdfs://10.19.31.139:9000/user/hadoop/output/wordcount";
+    private static final String INPUT = "hdfs://10.19.31.139:9000/user/hadoop/input/wordcount";
+    private static final String OUT_PUT = "hdfs://10.19.31.139:9000/user/hadoop/output/wordcount";
 
     public static class TokenizerMapper extends
             Mapper<Object, Text, Text, IntWritable> {
@@ -55,26 +56,7 @@ public class WordCount {
         }
     }
 
-    /**
-     * 删除指定目录
-     *
-     * @param conf
-     * @param dirPath
-     * @throws IOException
-     */
-    private static void deleteDir(Configuration conf, String dirPath) throws IOException {
-        FileSystem fs = FileSystem.get(conf);
-        Path targetPath = new Path(dirPath);
-        if (fs.exists(targetPath)) {
-            boolean delResult = fs.delete(targetPath, true);
-            if (delResult) {
-                System.out.println(targetPath + " has been deleted sucessfullly.");
-            } else {
-                System.out.println(targetPath + " deletion failed.");
-            }
-        }
 
-    }
 
     public static void main(String[] args) throws Exception {
         Configuration conf = new Configuration();
@@ -93,11 +75,6 @@ public class WordCount {
         job.setOutputValueClass(IntWritable.class);
         FileInputFormat.addInputPath(job, new Path(INPUT));
         FileOutputFormat.setOutputPath(job, new Path(OUT_PUT));
-//        if (HDFSUtil.exits(conf, OUT_PUT)) {
-//            System.out.println("改路径已经存在,先删除该目录......");
-//            System.out.println("删除结果:" + HDFSUtil.deleteFile(conf, OUT_PUT));
-//        }
         System.exit(job.waitForCompletion(true) ? 0 : 1);
-        System.out.println("end....................");
     }
 }
